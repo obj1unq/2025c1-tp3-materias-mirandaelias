@@ -13,5 +13,5 @@ class Carrera {
 
 class Materia{
     var nombre 
-    var carrera 
+    var carrera =[]
 }

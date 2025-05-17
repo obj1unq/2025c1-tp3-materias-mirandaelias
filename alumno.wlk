@@ -2,8 +2,7 @@ class Alumno {
 var nombre =""
 var carreras=[]
 var materiasAprobadas = []
-//var promedio = 0
-var cantMateriasAprobadas = 0
+var materiasInscripto = []
 
 
 method registrarMateria(materia,nota) {
@@ -16,38 +15,59 @@ method validarMateriaAprobada(materia,nota) {
             self.error ("No es posible registrar la materia")
         }
 }
-
+//Si tiene materia aprobada
 method estaAprobadaMateria(materia) =materiasAprobadas.any({aprobada => aprobada.materia() == materia})
 
 method noEsNotaSuficiente(nota) = nota < 7
 
-
+//cantidad de materias aprobadas
 method cantidadMateriasAprobadas() {
-  cantMateriasAprobadas = materiasAprobadas.size()
+  return  materiasAprobadas.size()
 }
-
+//Promedio
 method promedio() {
-    self.calculoPromedio()
+    return self.calculoPromedio()
 }
 
 method validarPromedio(){
-    if(cantMateriasAprobadas == 0){
+    if(materiasAprobadas.isEmpty()){
     self.error("No tenes ninguna materia aprobada")
     }
 } 
 
 method calculoPromedio(){
     self.validarPromedio()
-    return self.sumaDeNotas()/ cantMateriasAprobadas
+    return self.sumaDeNotas()/ materiasAprobadas.size()
 }
 method sumaDeNotas() {
   return materiasAprobadas.sum({materia=> materia.nota()})
 }
+//Todas las materias de las carreras a la que esta inscripto
+method materiasDeCarreras() {
+  return  carreras.map({carrera => carrera.materia()}).flatten()
+}
+
+method puedeInscribirseAMateria(materia) = self.condicionDeInscripcion(materia)
+
+method condicionDeInscripcion(materia) {
+  return    self.perteneceMateriaACarrera(materia)
+       and  self.estaAprobadaMateria(materia)
+       and  self.estaInscriptoEn(materia)
+       and  self.cumpleRequisitosDe(materia)
 
 }
-/*
-Ver si eliminar algunas variables
-*/
+
+method perteneceMateriaACarrera(materia) =self.materiasDeCarreras().contains(materia)
+
+method estaInscriptoEn(materia)=materiasInscripto.contains(materia)
+
+method cumpleRequisitosDe(materia)=
+materia.requisitos().all({requisito => self.estaAprobadaMateria(requisito)})
+
+
+}
+
+
 
 class MateriaAprobada{
     const materiaAprobada 
