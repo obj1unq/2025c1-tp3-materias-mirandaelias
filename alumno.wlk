@@ -51,8 +51,8 @@ method puedeInscribirseAMateria(materia) = self.condicionDeInscripcion(materia)
 
 method condicionDeInscripcion(materia) {
   return    self.perteneceMateriaACarrera(materia)
-       and  self.estaAprobadaMateria(materia)
-       and  self.estaInscriptoEn(materia)
+       and  not self.estaAprobadaMateria(materia)
+       and  not self.estaInscriptoEn(materia)
        and  self.cumpleRequisitosDe(materia)
 
 }
@@ -64,6 +64,21 @@ method estaInscriptoEn(materia)=materiasInscripto.contains(materia)
 method cumpleRequisitosDe(materia)=
 materia.requisitos().all({requisito => self.estaAprobadaMateria(requisito)})
 
+//Inscribir estudiante
+method inscribirA(materia){
+  self.validarInscripcionMateria(materia)
+  materiasInscripto.add(materia)
+  materia.inscribirEstudiante(self)
+}
+
+method validarInscripcionMateria(materia) {
+  if(not self.cumpleCondiciones(materia)){
+    self.error ("No te podes inscribir")
+  }
+}
+method cumpleCondiciones(materia){
+  return
+}
 
 }
 
