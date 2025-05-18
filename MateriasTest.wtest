@@ -1,0 +1,86 @@
+import universidad.*
+import alumno.*
+
+
+
+
+
+describe "Roque puede inscribirse en obj2 pero no en objeto3,ni tampoco en obj1"{
+
+    test "inscripcion a obj2"{
+        roque.inscribirA(objetos2)
+        assert.that(roque.estaInscriptoEn(objetos2))
+    }
+
+    test"inscripcion fallida a obj3"{
+        
+        assert.throwsException(roque.estaInscriptoEn(objetos3))
+    }
+
+    test"inscripcion fallida a obj1"{
+        assert.throwsException(roque.estaInscriptoEn(objetos1))
+    }
+
+}
+
+describe "Roque puede inscribirse en Objetos 2 y Programación Concurrente y en Biología 2"    {
+  test "Roque se inscribe a tres materias" {
+         roque.inscribirA(objetos2)
+         roque.inscribirA(programacionConcurrente)
+         roque.inscribirA(biologia2)
+         assert.that(roque.estaInscriptoEn(objetos2))
+         assert.that(roque.estaInscriptoEn(programacionConcurrente))
+         assert.that(roque.estaInscriptoEn(biologia2))
+
+  }
+}
+
+describe "Se inscribe luisa,romina y alicia a obj2, roque se queda sin cupo" {
+  test "Roque se queda sin cupo" {
+         luisa.inscribirA(objetos2)
+         romina.inscribirA(objetos2)
+         alicia.inscribirA(objetos2)
+         roque.inscribirA(objetos2)
+         assert.that(roque.estaEnListaDeEspera(objetos2))
+
+  }
+
+  test"Roque obtiene cupo"{
+         luisa.inscribirA(objetos2)
+         romina.inscribirA(objetos2)
+         alicia.inscribirA(objetos2)
+         roque.inscribirA(objetos2)
+         assert.that(roque.estaEnListaDeEspera(objetos2))
+         objetos2.darDeBajaEstudiante(romina)
+         assert.that(roque.estaInscriptoEn(objetos2))
+  }
+}
+
+const unq = new Universidad(listaCarreras = [informatica,medicina])
+const informatica = new Carrera(materias = 
+[objetos1, objetos2, objetos3,matematica1,basesDeDatos, programacionConcurrente,epyl])
+const medicina = new Carrera(materias = [biologia1,biologia2,quimica,anatomiaGeneral])
+
+const objetos1                = new Materia(requisitos=[],cupo= 30,alumnos=[],listaEspera =[])
+const objetos2                = new Materia(requisitos=[objetos1,matematica1],cupo= 3,alumnos=[],listaEspera =[])
+const matematica1             = new Materia(cupo= 30,alumnos=[],listaEspera =[])
+const programacionConcurrente = new Materia(requisitos=[objetos1,basesDeDatos],cupo= 30,alumnos=[],listaEspera =[])
+const basesDeDatos             = new Materia(requisitos=[],cupo= 30,alumnos=[],listaEspera =[])
+const biologia1               = new Materia(requisitos=[],cupo= 30,alumnos=[],listaEspera =[])
+const biologia2               = new Materia(requisitos=[biologia1],cupo= 30,alumnos=[],listaEspera =[])
+const objetos3                = new Materia(requisitos=[objetos2,basesDeDatos],cupo= 30,alumnos=[],listaEspera =[])
+const epyl                    = new Materia(requisitos=[],cupo= 30,alumnos=[],listaEspera =[])
+const quimica                 = new Materia(requisitos=[],cupo= 30,alumnos=[],listaEspera =[])
+const anatomiaGeneral         = new Materia(requisitos=[],cupo= 30,alumnos=[],listaEspera =[])
+
+const roque  =new Alumno(materiasAprobadas = [epylN,mate1N,obj1N,bd1N,quiN,bio1N],universidad = unq)
+const luisa  =new Alumno(materiasAprobadas = [epylN,obj1N,mate1N],universidad = unq)
+const romina =new Alumno(materiasAprobadas = [epylN,obj1N,mate1N],universidad = unq)
+const alicia =new Alumno(materiasAprobadas = [epylN],universidad = unq)
+
+const epylN = new MateriaAprobada(materiaAprobada =epyl ,notaMateria =7)
+const obj1N = new MateriaAprobada(materiaAprobada = objetos1,notaMateria =7)
+const quiN  = new MateriaAprobada(materiaAprobada = quimica,notaMateria =7)
+const bio1N = new MateriaAprobada(materiaAprobada = biologia1,notaMateria =7)
+const mate1N= new MateriaAprobada(materiaAprobada = matematica1,notaMateria =7)
+const bd1N  = new MateriaAprobada(materiaAprobada = basesDeDatos,notaMateria =7)
