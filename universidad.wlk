@@ -1,19 +1,29 @@
-object universidad {
-    var carreras= []
+import MateriasTest.*
 
+class Universidad {
+
+    var listaCarreras
+
+    method carreras()= listaCarreras
 }
 
+
+
 class Carrera {
-    var nombre
     var materias = []
     
+    method materias() = materias 
+    method estudianteBuscado(estudiante) = 
+    materias.filter({materia => materia.estaCursandoEstudiante(estudiante)}) 
+
+    method esCursadaPor(estudiante) = materias.any({materia => materia.estaCursandoEstudiante(estudiante)||
+                                                                materia.estaEnListaDeEspera(estudiante)})
+
 
 }
 
 
 class Materia{
-    var nombre 
-    var carrera =[]
     var requisitos = []
     var cupo    = 0
     var alumnos = []
@@ -26,12 +36,13 @@ class Materia{
     method inscribirEstudiante(estudiante) {
         if (self.hayCuposDisponibles()) {
             alumnos.add(estudiante)
+            cupo -= 1
     } else {
          listaEspera.add(estudiante)
   }
     }
 
-    method hayCuposDisponibles()= not cupo == 0
+    method hayCuposDisponibles()= alumnos.size()< cupo
 
 //Dar de baja estudiante e inscribir al primero
     method darDeBajaEstudiante(estudiante){
@@ -43,7 +54,7 @@ class Materia{
 
     method bajarEstudiante(estudiante){
         alumnos.remove(estudiante)
-        cupo =+ 1
+        cupo += 1
     } 
 
     method validarBajaEstudiante(estudiante) {
@@ -56,13 +67,28 @@ class Materia{
 
     method inscribirEstudianteEnEspera() {
       self.validarInscripcionDeEstudianteEnEspera()
-      alumnos.add(listaEspera.first())
-      listaEspera.first().inscribirA(self)
+      self.agregarACursada(listaEspera.first())
+
     }
+
+     method agregarACursada(estudiante){
+      alumnos.add(estudiante)
+      listaEspera.remove(estudiante)
+  
+     }
+
 
     method validarInscripcionDeEstudianteEnEspera(){
         if( listaEspera.isEmpty()){
             self.error("No hay nadie en la lista de espera")
         }
     }
+
+    method alumnos()= alumnos 
+
+    method estudiantesEnEspera() = listaEspera
+
+    method estaCursandoEstudiante(estudiante) = alumnos.contains(estudiante)
+
+    method estaEnListaDeEspera(estudiante) =listaEspera.contains(estudiante)
 }

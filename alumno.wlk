@@ -1,8 +1,8 @@
+import universidad.*
+
 class Alumno {
-var nombre =""
-var carreras=[]
 var materiasAprobadas = []
-var materiasInscripto = []
+var universidad 
 
 
 method registrarMateria(materia,nota) {
@@ -44,8 +44,12 @@ method sumaDeNotas() {
 }
 //Todas las materias de las carreras a la que esta inscripto
 method materiasDeCarreras() {
-  return  carreras.map({carrera => carrera.materia()}).flatten()
+  return  universidad.carrerasDeEstudiante(self).map({carrera => carrera.materias()}).flatten()
+
 }
+method carrerasDeEstudiante(estudiante) = universidad.carreras().filter({carrera => carrera.esCursadaPor(self)})
+
+
 
 method puedeInscribirseAMateria(materia) = self.condicionDeInscripcion(materia)
 
@@ -59,7 +63,9 @@ method condicionDeInscripcion(materia) {
 
 method perteneceMateriaACarrera(materia) =self.materiasDeCarreras().contains(materia)
 
-method estaInscriptoEn(materia)=materiasInscripto.contains(materia)
+method estaInscriptoEn(materia)=materia.alumnos().contains(self) 
+
+method estaEnListaDeEspera(materia) =materia.estudiantesEnEspera().contains(self)
 
 method cumpleRequisitosDe(materia)=
 materia.requisitos().all({requisito => self.estaAprobadaMateria(requisito)})
@@ -67,18 +73,36 @@ materia.requisitos().all({requisito => self.estaAprobadaMateria(requisito)})
 //Inscribir estudiante
 method inscribirA(materia){
   self.validarInscripcionMateria(materia)
-  materiasInscripto.add(materia)
   materia.inscribirEstudiante(self)
 }
 
 method validarInscripcionMateria(materia) {
-  if(not self.cumpleCondiciones(materia)){
+  if(materia.estaCursandoEstudiante(self)|| materia.estaEnListaDeEspera(self)){
     self.error ("No te podes inscribir")
   }
 }
-method cumpleCondiciones(materia){
-  return
+
+//Las materias a la que esta inscripto y a las que esta en lista de espera
+method materiasInscripto() = self.materiasDeCarreras().filter({materia => materia.alumnos().contains(self)})
+
+method materiasListaDeEspera() = 
+self.materiasDeCarreras().filter({materia => materia.estudiantesEnEspera().contains(self)}) 
+
+//Todas las materias a la que se puede inscribir
+
+method posibilidadDeCursado(carrera){
+  self.validarCursado(carrera)
+  return carrera.materias().filter({materia=> self.puedeInscribirse(materia)})
+} 
+method validarCursado(carrera) {
+  if(not carrera.esCursadaPor(self)){
+    self.error("No esta cursando esta carrera")
+  }
 }
+
+method puedeInscribirse(materia) = not self.estaInscriptoEn(materia)
+                              and  not self.estaEnListaDeEspera(materia)
+                              and  self.cumpleRequisitosDe(materia)
 
 }
 
